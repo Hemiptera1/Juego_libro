@@ -1,6 +1,12 @@
 import random
 import textwrap
 
+def marco_embellecedor(mensaje):
+	marco = "-" * 72
+	print(marco)
+	print(mensaje)
+	print(marco, end="\n\n")
+
 def corre_juego():
 	seguir_jugando = "si"
 	ancho = 72
@@ -13,9 +19,9 @@ def corre_juego():
 	while seguir_jugando == "si":
 		choza = chozas()
 		índice = elección_de_usuario()
-		revela_chozas(choza, linea_punteada)
-		entrar_a_la_choza(choza, índice)
-		combate(pelea, medidor_salud)
+		revela_chozas(choza, índice)
+		pelea = entrar_a_la_choza(choza, índice)
+		combate(medidor_salud, pelea)
 		seguir_jugando = input("Deseas seguir jugando? (si/no): ")
 
 def presentando(linea_punteada, ancho):
@@ -51,50 +57,56 @@ def elección_de_usuario():
 	índice = int(input("Escoge la tienda en la que se adentrará sir Ramza (1-5): "))
 	return índice
 
-def revela_chozas(choza, linea_punteada):
-	print(linea_punteada)
-	print("A continuación se revelarán los ocupantes de las chozas:")
-	print(f"Choza 1:{choza[0]} Choza 2:{choza[1]} Choza 3:{choza[2]} Choza 4:{choza[3]} Choza 5:{choza[4]}")
-	print(linea_punteada, end = "\n\n")
+def revela_chozas(choza, índice):
+	mensaje = f'''A continuación se revelarán los ocupantes de las chozas:
+Choza 1:{choza[0]} Choza 2:{choza[1]} Choza 3:{choza[2]} Choza 4:{choza[3]} Choza 5:{choza[4]}
+Entras en la choza número {str(índice)}:'''
+	marco_embellecedor(mensaje)
 
 def entrar_a_la_choza(choza, índice):
+	pelea = "no"
 	if choza[índice-1] == "Desocupado":
-		print("La choza estaba vacía y has sido capaz de hacer uso de ella\nRepones tus fuerzas, has ganado!!")
+		print("La choza estaba vacía y has sido capaz de hacer uso de ella para reponer tus fuerzas, has ganado!!")
 	elif choza[índice-1] == "Amigo":
 		print("Has hallado buenos amigos que te ayudan a reponer tus fuerzas, has ganado!!")
-	else:
+	elif choza[índice-1] == "Enemigo":
 		print("En guardia!! Te has topado con un enemigo.")
-		return pelea = "si"
+		pelea = "si"
+	return pelea
 
 def atacar(medidor_salud):
-	objetivos = ["Player", "Orco"]
+	objetivos = ["Jugador", "Orco"]
 	unidad_a_dañar = random.choice(objetivos)
 	puntos_vida = medidor_salud[unidad_a_dañar]
 	daño = random.randint(10, 15)
 	medidor_salud[unidad_a_dañar] = max(puntos_vida - daño, 0)
-	if unidad_a_dañar == "Player":
-		print("El orco asesta un golpazo con su maza!")
-		print(f"Inflingiendo {daño} de daño a sir Ramza")
+	if unidad_a_dañar == "Jugador":
+		mensaje = f'''El orco asesta un golpazo con su maza!
+Inflingiendo {daño} de daño a sir Ramza'''
+		marco_embellecedor(mensaje)
 	elif unidad_a_dañar == "Orco":
-		print("Ramza cabalga raudo y lanza un valiente ataque.")
-		print(f"Su hoja se hunde en la carne del orco inflingiendo {daño}.")
+		mensaje = f'''Ramza cabalga raudo y lanza un valiente ataque.
+Su hoja se hunde en la carne del orco inflingiendo {daño} puntos de daño.'''
+		marco_embellecedor(mensaje)
 
-def combate(pelea, medidor_salud):
+def combate(medidor_salud, pelea):
 	while pelea == "si":
 		pelea = input("El enemigo se alza desafiante con {0[Orco]} de vida, lo atacas? (si/no): ".format(medidor_salud))
 		if pelea == "no":
-				print("Huyes del combate con {0[Player]} de salud".format(medidor_salud))
+				print("Huyes del combate con {0[Jugador]} de salud".format(medidor_salud))
 				break
+		elif pelea == "si":
+			atacar(medidor_salud)
 
-		atacar(medidor_salud)
-
-		if medidor_salud["Player"] == 0:
+		if medidor_salud["Jugador"] == 0:
 			print("Te han asestado un golpe mortal! Has muerto.")
-		elif medidor salud["Orco"] == 0:
+			break
+		elif medidor_salud["Orco"] == 0:
 			print("Luego del ataque tomas distancia y observas a tu enemigo"
 				  "Por un momento parece inmovil, pero algo llama tu atención"
 				  "Se ladea lentamente hasta desplomarse con un sonoro golpe"
-				  "Estaba muerto antes de tocar el suelo", width = 72)
+				  "Estaba muerto antes de tocar el suelo")
+			break
 
 
 if __name__ == "__main__":
